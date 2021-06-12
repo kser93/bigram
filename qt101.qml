@@ -4,7 +4,7 @@ import QtQuick.Controls.Material 2.15
 
 ApplicationWindow {
     id: window
-    title: "bigram101"
+    title: "BGRAM-101"
     visible: true
     width: 500
     height: 500

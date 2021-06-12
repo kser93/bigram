@@ -1,7 +1,7 @@
 import sys
 
 from PySide6.QtCore import QObject, QUrl, Slot
-from PySide6.QtGui import QGuiApplication, QImage, QPixmap
+from PySide6.QtGui import QGuiApplication, QIcon, QImage, QPixmap
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickImageProvider
 from PIL import Image
@@ -48,7 +48,7 @@ class BigramImageProvider(QQuickImageProvider):
 
     def requestImage(self, p_id, p_size, p_requested_size):
         if p_id == 'bigram_placeholder':
-            with open('bigram_placeholder.bmp', 'rb') as fd:
+            with open('icon.png', 'rb') as fd:
                 raw = fd.read()
                 return QImage.fromData(raw)
         else:
@@ -61,6 +61,7 @@ if __name__ == '__main__':
 
     bridge = Bridge(bigrams, sensitivity=20, saturation=70)
     app = QGuiApplication(sys.argv)
+    app.setWindowIcon(QIcon('icon.png'))
     qml_engine = QQmlApplicationEngine()
     qml_engine.rootContext().setContextProperty('ctx', bridge)
     qml_engine.addImageProvider('bigram', BigramImageProvider())
