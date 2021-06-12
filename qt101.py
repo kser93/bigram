@@ -12,21 +12,21 @@ from misc import rescale_bigrams_scaled_uniform
 
 
 class Bridge(QObject):
-    def __init__(self, bigrams, sensitivity, saturation):
+    def __init__(self, bigrams, low_threshold, high_threshold):
         super().__init__()
         self.bigrams = bigrams
-        self.sensitivity = sensitivity / 100
-        self.saturation = saturation / 100
+        self.low_threshold = low_threshold / 100
+        self.high_threshold = high_threshold / 100
 
     @Slot()
-    def on_sensitivity_changed(self, val):
-        self.sensitivity = val
+    def on_low_threshold_changed(self, val):
+        self.low_threshold = val
         new_source = f'image://bigram/{val}'
         root.findChild(QObject, 'img_bigram').setProperty('source', new_source)
 
     @Slot()
-    def on_saturation_changed(self, val):
-        self.saturation = val
+    def on_high_threshold_changed(self, val):
+        self.high_threshold = val
         new_source = f'image://bigram/{val}'
         root.findChild(QObject, 'img_bigram').setProperty('source', new_source)
 
@@ -34,8 +34,8 @@ class Bridge(QObject):
         img = Image.new('RGB', (size, size), '#000000')
         for xy, brightness in rescale_bigrams_scaled_uniform(
                 self.bigrams,
-                sensitivity=self.sensitivity,
-                saturation=self.saturation).items():
+                low_threshold=self.low_threshold,
+                high_threshold=self.high_threshold).items():
             img.putpixel(xy, (brightness, brightness, brightness))
         qt_img = ImageQt(img)
         pix = QPixmap.fromImage(qt_img)
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     with open('./busybox', 'rb') as fd:
         bigrams = get_bigrams_sorted(fd.read())
 
-    bridge = Bridge(bigrams, sensitivity=20, saturation=70)
+    bridge = Bridge(bigrams, low_threshold=20, high_threshold=70)
     app = QGuiApplication(sys.argv)
     app.setWindowIcon(QIcon('icon.png'))
     qml_engine = QQmlApplicationEngine()
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     qml_engine.load(QUrl('./qt101.qml'))
 
     root = qml_engine.rootObjects()[0]
-    root.sensitivity_changed.connect(bridge.on_sensitivity_changed)
-    root.saturation_changed.connect(bridge.on_saturation_changed)
+    root.low_threshold_changed.connect(bridge.on_low_threshold_changed)
+    root.high_threshold_changed.connect(bridge.on_high_threshold_changed)
 
     sys.exit(app.exec())

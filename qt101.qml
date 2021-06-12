@@ -10,8 +10,8 @@ ApplicationWindow {
     height: 500
     Material.theme: Material.Dark
 
-    signal sensitivity_changed(real value)
-    signal saturation_changed(real value)
+    signal low_threshold_changed(real value)
+    signal high_threshold_changed(real value)
 
     Pane {
         width: parent.width
@@ -43,8 +43,8 @@ ApplicationWindow {
             to: 100
             first.value: 20
             second.value: 70
-            first.onMoved: sensitivity_changed(first.position)
-            second.onMoved: saturation_changed(second.position)
+            first.onMoved: low_threshold_changed(first.position)
+            second.onMoved: high_threshold_changed(second.position)
         }
     }
 }

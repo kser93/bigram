@@ -63,16 +63,16 @@ def get_bigrams_sorted(raw):
 def _gen_rescale_bigrams_scaled_uniform(
         sorted_bigrams,
         scale: int = 256,
-        sensitivity: float = 0.0,
-        saturation: float = 1.0
+        low_threshold: float = 0.0,
+        high_threshold: float = 1.0
 ):
     for i, (xy, cnt) in enumerate(sorted_bigrams):
         progress = i / len(sorted_bigrams)
-        if not sensitivity <= progress <= saturation:
+        if not low_threshold <= progress <= high_threshold:
             yield xy, 0
         else:
             try:
-                scaled_progress = min(progress / (saturation - sensitivity), 1.0)
+                scaled_progress = min(progress / (high_threshold - low_threshold), 1.0)
             except ZeroDivisionError:
                 scaled_progress = 1.0
             yield (
@@ -84,16 +84,16 @@ def _gen_rescale_bigrams_scaled_uniform(
 def rescale_bigrams_scaled_uniform(
         sorted_bigrams,
         scale: int = 256,
-        sensitivity: float = 0.0,
-        saturation: float = 1.0
+        low_threshold: float = 0.0,
+        high_threshold: float = 1.0
 ):
     if scale <= 1:
         raise ValueError('Incorrect scale')
-    if not 0.0 <= sensitivity <= 1.0:
+    if not 0.0 <= low_threshold <= 1.0:
         raise ValueError('Incorrect sensitivity')
-    if not 0.0 <= saturation <= 1.0:
+    if not 0.0 <= high_threshold <= 1.0:
         raise ValueError('Incorrect saturation')
-    if sensitivity > saturation:
+    if low_threshold > high_threshold:
         raise ValueError('Sensitivity should be lesser than saturation')
 
-    return dict(_gen_rescale_bigrams_scaled_uniform(sorted_bigrams, scale, sensitivity, saturation))
+    return dict(_gen_rescale_bigrams_scaled_uniform(sorted_bigrams, scale, low_threshold, high_threshold))
