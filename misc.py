@@ -68,10 +68,8 @@ def _gen_rescale_bigrams_scaled_uniform(
 ):
     for i, (xy, cnt) in enumerate(sorted_bigrams):
         progress = i / len(sorted_bigrams)
-        if progress < sensitivity:
+        if not sensitivity <= progress <= saturation:
             yield xy, 0
-        elif progress > saturation:
-            yield xy, scale - 1
         else:
             try:
                 scaled_progress = min(progress / (saturation - sensitivity), 1.0)
