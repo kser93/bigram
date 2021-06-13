@@ -56,6 +56,11 @@ def get_bigrams(raw):
 #     }
 
 
+def get_unigrams_sorted(raw):
+    unigrams = Counter(raw)
+    return sorted(unigrams.items(), key=itemgetter(0))
+
+
 def get_bigrams_sorted(raw):
     return sorted(get_bigrams(raw).items(), key=itemgetter(1))
 
